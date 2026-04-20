@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Candidate Nomination')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-person-badge"></i> Candidate Nomination Form</h4>
+                </div>
+                <div class="card-body">
+                    <div th:if="${error}" class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+                    </div>
+                    <form th:action="@{/candidate/register}" method="post" th:object="${candidateDTO}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="name" th:field="*{name}"
+                                       th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}"
+                                       th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" th:field="*{password}"
+                                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="partyName" class="form-label">Party Name</label>
+                                <input type="text" class="form-control" id="partyName" th:field="*{partyName}"
+                                       th:classappend="${#fields.hasErrors('partyName')} ? 'is-invalid'" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('partyName')}" th:errors="*{partyName}"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="symbol" class="form-label">Party Symbol</label>
+                                <input type="text" class="form-control" id="symbol" th:field="*{symbol}"
+                                       th:classappend="${#fields.hasErrors('symbol')} ? 'is-invalid'"
+                                       placeholder="e.g., Lotus, Hand, etc." required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('symbol')}" th:errors="*{symbol}"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="constituencyId" class="form-label">Constituency</label>
+                            <select class="form-select" id="constituencyId" th:field="*{constituencyId}" required>
+                                <option value="">-- Select Constituency --</option>
+                                <option th:each="c : ${constituencies}" th:value="${c.constituencyId}"
+                                        th:text="${c.name + ' (' + c.state + ')'}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('constituencyId')}" th:errors="*{constituencyId}"></div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-send"></i> Submit Nomination
+                        </button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="/">Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

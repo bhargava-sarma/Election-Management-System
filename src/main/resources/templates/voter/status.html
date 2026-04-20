@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Vote Status')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div th:if="${success}" class="alert alert-success">
+                <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-receipt"></i> Vote Status & Receipt</h4>
+                </div>
+                <div class="card-body text-center">
+                    <div th:if="${status == 'VOTED'}">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                        <h4 class="mt-3 text-success">Vote Successfully Recorded</h4>
+                        <hr>
+                        <table class="table table-borderless text-start">
+                            <tr><th>Voter Name:</th><td th:text="${voter.name}"></td></tr>
+                            <tr><th>Voter ID:</th><td th:text="${voter.voterId}"></td></tr>
+                            <tr><th>Constituency:</th><td th:text="${voter.constituency.name}"></td></tr>
+                        </table>
+                        <p class="text-muted small">
+                            <i class="bi bi-shield-check"></i>
+                            Your vote has been securely recorded. Thank you for participating in the democratic process.
+                        </p>
+                    </div>
+                    <div th:if="${status == 'NOT_VOTED'}">
+                        <i class="bi bi-exclamation-circle-fill text-warning" style="font-size: 4rem;"></i>
+                        <h4 class="mt-3 text-warning">You Have Not Voted Yet</h4>
+                        <a href="/voter/vote" class="btn btn-primary mt-3">
+                            <i class="bi bi-pencil-square"></i> Cast Your Vote
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <a href="/voter/dashboard" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

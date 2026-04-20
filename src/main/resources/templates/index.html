@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Election Management System')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container py-5">
+    <!-- Alert messages -->
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold" style="color: #1a237e;">
+            <i class="bi bi-building"></i> Election Management System
+        </h1>
+        <p class="lead text-muted">A comprehensive platform for managing democratic elections in India</p>
+        <div th:if="${election != null}" class="mt-3">
+            <span class="badge bg-primary fs-6 p-2" th:text="'Active: ' + ${election.title}"></span>
+            <span class="badge fs-6 p-2 ms-2"
+                  th:classappend="${election.currentPhase.name() == 'VOTING'} ? 'bg-success' : 'bg-secondary'"
+                  th:text="'Phase: ' + ${election.currentPhase}"></span>
+            <a href="/results" class="btn btn-outline-primary btn-sm ms-2">
+                <i class="bi bi-trophy"></i> View Results
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Login Card -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-box-arrow-in-right"></i> Login</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Login with your registered credentials. The system will detect your role automatically.</p>
+                    <form th:action="@{/login}" method="post" th:object="${loginDTO}">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}"
+                                   placeholder="Enter your email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" th:field="*{password}"
+                                   placeholder="Enter your password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Cards -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header text-white" style="background-color: #2e7d32;">
+                    <h5 class="mb-0"><i class="bi bi-person-plus"></i> New User? Register Here</h5>
+                </div>
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <div class="d-grid gap-3">
+                        <a href="/voter/register" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-person-check"></i> Register as Voter
+                        </a>
+                        <a href="/candidate/register" class="btn btn-outline-success btn-lg">
+                            <i class="bi bi-person-badge"></i> Register as Candidate (Nomination)
+                        </a>
+                    </div>
+                    <hr>
+                    <p class="text-muted text-center mb-0">
+                        <i class="bi bi-info-circle"></i>
+                        Returning Officers and Admins are pre-registered by the system.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="row g-4 mt-4">
+        <div class="col-md-3">
+            <div class="card text-center p-3">
+                <i class="bi bi-people-fill fs-1 text-primary"></i>
+                <h6 class="mt-2">Voter Registration</h6>
+                <p class="text-muted small">Register with Aadhaar to cast your vote</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center p-3">
+                <i class="bi bi-person-badge-fill fs-1 text-success"></i>
+                <h6 class="mt-2">Candidate Nomination</h6>
+                <p class="text-muted small">File your nomination for a constituency</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center p-3">
+                <i class="bi bi-shield-check fs-1 text-warning"></i>
+                <h6 class="mt-2">Returning Officers</h6>
+                <p class="text-muted small">Approve nominations & manage phases</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center p-3">
+                <i class="bi bi-gear-fill fs-1 text-danger"></i>
+                <h6 class="mt-2">Admin Panel</h6>
+                <p class="text-muted small">Generate reports & oversee elections</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

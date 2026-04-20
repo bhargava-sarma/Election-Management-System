@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Returning Officer Dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container py-5">
+    <h2 class="mb-4"><i class="bi bi-shield-check"></i> Returning Officer Dashboard</h2>
+
+    <!-- Alert messages -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row g-4">
+        <!-- Officer Info -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-person"></i> Officer Info</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> <span th:text="${officer.name}"></span></p>
+                    <p><strong>Officer ID:</strong> <span th:text="${officer.officerId}"></span></p>
+                    <p><strong>Assigned Constituency:</strong> <span th:text="${officer.assignedConstituency.name}"></span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Election Phase Management -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-gear"></i> Election Phase Management</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${election != null}">
+                        <p>
+                            <strong>Current Election:</strong> <span th:text="${election.title}"></span><br>
+                            <strong>Current Phase:</strong>
+                            <span class="badge bg-info fs-6" th:text="${election.currentPhase}"></span>
+                        </p>
+                        <form th:action="@{/officer/phase}" method="post" class="d-flex gap-2">
+                            <input type="hidden" name="electionId" th:value="${election.electionId}">
+                            <select name="phase" class="form-select" required>
+                                <option value="">-- Change Phase --</option>
+                                <option th:each="p : ${phases}" th:value="${p}" th:text="${p}"></option>
+                            </select>
+                            <button type="submit" class="btn btn-primary"
+                                    onclick="return confirm('Are you sure you want to change the election phase?')">
+                                Change
+                            </button>
+                        </form>
+                    </div>
+                    <div th:unless="${election != null}" class="text-muted">No active election.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Nominations -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-hourglass-split"></i> Pending Nominations
+                        <span class="badge bg-light text-dark ms-2" th:text="${#lists.size(pendingCandidates)}"></span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(pendingCandidates)}" class="text-muted text-center py-3">
+                        No pending nominations.
+                    </div>
+                    <div class="table-responsive" th:unless="${#lists.isEmpty(pendingCandidates)}">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Party</th>
+                                    <th>Symbol</th>
+                                    <th>Email</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="c : ${pendingCandidates}">
+                                    <td th:text="${c.name}"></td>
+                                    <td th:text="${c.partyName}"></td>
+                                    <td th:text="${c.symbol}"></td>
+                                    <td th:text="${c.email}"></td>
+                                    <td>
+                                        <form th:action="@{/officer/approve/{id}(id=${c.userId})}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                <i class="bi bi-check-lg"></i> Approve
+                                            </button>
+                                        </form>
+                                        <form th:action="@{/officer/reject/{id}(id=${c.userId})}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-x-lg"></i> Reject
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- All Candidates -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="bi bi-people"></i> All Candidates in Constituency</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(allCandidates)}" class="text-muted text-center py-3">
+                        No candidates registered.
+                    </div>
+                    <div class="table-responsive" th:unless="${#lists.isEmpty(allCandidates)}">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Candidate ID</th>
+                                    <th>Name</th>
+                                    <th>Party</th>
+                                    <th>Symbol</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="c : ${allCandidates}">
+                                    <td th:text="${c.candidateId}"></td>
+                                    <td th:text="${c.name}"></td>
+                                    <td th:text="${c.partyName}"></td>
+                                    <td th:text="${c.symbol}"></td>
+                                    <td>
+                                        <span class="badge"
+                                              th:classappend="${c.nominationStatus.name() == 'APPROVED'} ? 'bg-success' : (${c.nominationStatus.name() == 'REJECTED'} ? 'bg-danger' : 'bg-warning text-dark')"
+                                              th:text="${c.nominationStatus}"></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Counting Results Preview (visible during COUNTING and RESULT_DECLARED phases) -->
+        <div class="col-12" th:if="${countingResults != null}">
+            <div class="card">
+                <div class="card-header text-white" style="background-color: #1a237e;">
+                    <h5 class="mb-0">
+                        <i class="bi bi-bar-chart-line"></i> Vote Counting Results
+                        <span class="badge bg-warning text-dark ms-2"
+                              th:if="${election != null and election.currentPhase.name() == 'COUNTING'}">
+                            Preview — Not yet declared publicly
+                        </span>
+                        <span class="badge bg-success ms-2"
+                              th:if="${election != null and election.currentPhase.name() == 'RESULT_DECLARED'}">
+                            Declared
+                        </span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${countingResults.isEmpty()}" class="text-muted text-center py-3">
+                        <i class="bi bi-clipboard-x fs-3"></i>
+                        <p class="mt-2">No votes were cast — no results to display.</p>
+                    </div>
+                    <div class="row g-3" th:unless="${countingResults.isEmpty()}">
+                        <div class="col-md-6" th:each="result : ${countingResults}">
+                            <div class="card border-primary">
+                                <div class="card-header bg-light">
+                                    <strong><i class="bi bi-geo-alt"></i>
+                                        <span th:text="${result.constituency.name}"></span></strong>
+                                    <small class="text-muted" th:text="' — ' + ${result.constituency.state}"></small>
+                                </div>
+                                <div class="card-body">
+                                    <pre class="bg-light p-2 rounded mb-0"
+                                         style="white-space: pre-wrap; font-size: 0.85rem;"
+                                         th:text="${result.voteCounts}"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3 text-muted text-center"
+                         th:if="${election != null and election.currentPhase.name() == 'COUNTING'}">
+                        <i class="bi bi-info-circle"></i>
+                        Change phase to <strong>RESULT_DECLARED</strong> to make these results visible to the public.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

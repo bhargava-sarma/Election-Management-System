@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Cast Your Vote')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Ballot Paper — <span th:text="${voter.constituency.name}"></span></h4>
+                </div>
+                <div class="card-body">
+                    <div th:if="${error}" class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+                    </div>
+
+                    <p class="text-muted mb-4">
+                        <i class="bi bi-info-circle"></i>
+                        Election: <strong th:text="${election.title}"></strong> |
+                        Constituency: <strong th:text="${voter.constituency.name}"></strong>
+                    </p>
+
+                    <div th:if="${#lists.isEmpty(candidates)}" class="alert alert-warning">
+                        No approved candidates in your constituency yet.
+                    </div>
+
+                    <form th:unless="${#lists.isEmpty(candidates)}" th:action="@{/voter/vote}" method="post">
+                        <div class="list-group mb-4">
+                            <label th:each="candidate : ${candidates}" class="list-group-item list-group-item-action">
+                                <div class="d-flex align-items-center">
+                                    <input type="radio" name="candidateId" th:value="${candidate.userId}"
+                                           class="form-check-input me-3" required>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1" th:text="${candidate.name}"></h6>
+                                        <small class="text-muted">
+                                            <i class="bi bi-flag"></i> <span th:text="${candidate.partyName}"></span> |
+                                            Symbol: <span th:text="${candidate.symbol}"></span>
+                                        </small>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg"
+                                    onclick="return confirm('Are you sure? Your vote cannot be changed once submitted.')">
+                                <i class="bi bi-check-circle"></i> Submit Vote
+                            </button>
+                            <a href="/voter/dashboard" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

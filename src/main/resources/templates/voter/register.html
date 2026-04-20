@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Voter Registration')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-person-plus"></i> Voter Registration</h4>
+                </div>
+                <div class="card-body">
+                    <div th:if="${error}" class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+                    </div>
+                    <form th:action="@{/voter/register}" method="post" th:object="${voterDTO}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}"
+                                   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}"
+                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" th:field="*{password}"
+                                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="aadhaarNumber" class="form-label">Aadhaar Number (12 digits)</label>
+                            <input type="text" class="form-control" id="aadhaarNumber" th:field="*{aadhaarNumber}"
+                                   th:classappend="${#fields.hasErrors('aadhaarNumber')} ? 'is-invalid'"
+                                   maxlength="12" pattern="\d{12}" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('aadhaarNumber')}" th:errors="*{aadhaarNumber}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="constituencyId" class="form-label">Constituency</label>
+                            <select class="form-select" id="constituencyId" th:field="*{constituencyId}" required>
+                                <option value="">-- Select Constituency --</option>
+                                <option th:each="c : ${constituencies}" th:value="${c.constituencyId}"
+                                        th:text="${c.name + ' (' + c.state + ')'}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('constituencyId')}" th:errors="*{constituencyId}"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-check-circle"></i> Register
+                        </button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="/voter/login">Already registered? Login here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

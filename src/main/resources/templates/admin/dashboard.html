@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin Dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container py-5">
+    <h2 class="mb-4"><i class="bi bi-gear-fill"></i> Admin Dashboard</h2>
+
+    <!-- Alert messages -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row g-4">
+        <!-- Stats Cards -->
+        <div class="col-md-4">
+            <div class="card text-center bg-primary text-white">
+                <div class="card-body">
+                    <i class="bi bi-people-fill fs-1"></i>
+                    <h3 class="mt-2" th:text="${totalVoters}">0</h3>
+                    <p class="mb-0">Registered Voters</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-success text-white">
+                <div class="card-body">
+                    <i class="bi bi-person-badge-fill fs-1"></i>
+                    <h3 class="mt-2" th:text="${totalCandidates}">0</h3>
+                    <p class="mb-0">Registered Candidates</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-warning text-dark">
+                <div class="card-body">
+                    <i class="bi bi-geo-alt-fill fs-1"></i>
+                    <h3 class="mt-2" th:text="${totalConstituencies}">0</h3>
+                    <p class="mb-0">Constituencies</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Election Info -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Active Election</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${election != null}">
+                        <table class="table table-borderless">
+                            <tr><th>Election:</th><td th:text="${election.title}"></td></tr>
+                            <tr>
+                                <th>Phase:</th>
+                                <td><span class="badge bg-info fs-6" th:text="${election.currentPhase}"></span></td>
+                            </tr>
+                            <tr><th>Start Date:</th><td th:text="${#dates.format(election.startDate, 'dd MMM yyyy')}"></td></tr>
+                            <tr><th>End Date:</th><td th:text="${#dates.format(election.endDate, 'dd MMM yyyy')}"></td></tr>
+                        </table>
+                    </div>
+                    <div th:unless="${election != null}" class="text-muted">No active election.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body d-grid gap-2">
+                    <a href="/admin/reports" class="btn btn-primary">
+                        <i class="bi bi-file-earmark-bar-graph"></i> View Reports
+                    </a>
+                    <a href="/results" class="btn btn-outline-success">
+                        <i class="bi bi-trophy"></i> View Results
+                    </a>
+                    <hr>
+                    <form th:action="@{/admin/reset}" method="post">
+                        <button type="submit" class="btn btn-danger w-100"
+                                onclick="return confirm('⚠️ This will DELETE all voters, candidates, votes, results, and reports, and reset the election to SCHEDULED phase. Are you sure?')">
+                            <i class="bi bi-arrow-counterclockwise"></i> Reset Election Data
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

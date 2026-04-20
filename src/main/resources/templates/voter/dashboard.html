@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Voter Dashboard')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container py-5">
+    <h2 class="mb-4"><i class="bi bi-speedometer2"></i> Voter Dashboard</h2>
+
+    <div th:if="${error}" class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle"></i> <span th:text="${error}"></span>
+    </div>
+
+    <div class="row g-4">
+        <!-- Voter Info Card -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-person"></i> Your Information</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr><th>Name:</th><td th:text="${voter.name}"></td></tr>
+                        <tr><th>Voter ID:</th><td th:text="${voter.voterId}"></td></tr>
+                        <tr><th>Email:</th><td th:text="${voter.email}"></td></tr>
+                        <tr><th>Constituency:</th><td th:text="${voter.constituency.name}"></td></tr>
+                        <tr><th>State:</th><td th:text="${voter.constituency.state}"></td></tr>
+                        <tr>
+                            <th>Vote Status:</th>
+                            <td>
+                                <span th:if="${voter.hasVoted}" class="badge bg-success">Voted</span>
+                                <span th:unless="${voter.hasVoted}" class="badge bg-warning text-dark">Not Voted</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Election Info Card -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-white" style="background-color: #2e7d32;">
+                    <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Election Status</h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${election != null}">
+                        <table class="table table-borderless">
+                            <tr><th>Election:</th><td th:text="${election.title}"></td></tr>
+                            <tr>
+                                <th>Phase:</th>
+                                <td><span class="badge bg-info" th:text="${election.currentPhase}"></span></td>
+                            </tr>
+                            <tr><th>Start Date:</th><td th:text="${#dates.format(election.startDate, 'dd MMM yyyy')}"></td></tr>
+                            <tr><th>End Date:</th><td th:text="${#dates.format(election.endDate, 'dd MMM yyyy')}"></td></tr>
+                        </table>
+                    </div>
+                    <div th:unless="${election != null}" class="text-muted">
+                        No active election at the moment.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Card -->
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div th:if="${votingOpen and !voter.hasVoted}">
+                        <h5 class="text-success"><i class="bi bi-check-circle"></i> Voting is Open!</h5>
+                        <a href="/voter/vote" class="btn btn-success btn-lg mt-2">
+                            <i class="bi bi-pencil-square"></i> Cast Your Vote
+                        </a>
+                    </div>
+                    <div th:if="${voter.hasVoted}">
+                        <h5 class="text-primary"><i class="bi bi-check2-all"></i> You have already voted</h5>
+                        <a href="/voter/status" class="btn btn-primary mt-2">
+                            <i class="bi bi-receipt"></i> View Vote Receipt
+                        </a>
+                    </div>
+                    <div th:if="${!votingOpen and !voter.hasVoted}">
+                        <h5 class="text-muted"><i class="bi bi-clock"></i> Voting is not currently open</h5>
+                        <p class="text-muted">Please wait for the election phase to change to VOTING.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
